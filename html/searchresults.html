@@ -1,0 +1,47 @@
+<html>
+<head>
+    <title>Search Results</title>
+    <style>
+        {{stylesheet}}
+    </style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+<body>
+<h1>Resultado de la búsqueda</h1>
+<div>
+    <a href="/">Volver a buscar</a>
+</div>
+<p style="font-size: x-large">Hola {{singer}}, aquí tienes los resultados de tu búsqueda.
+    Pulsa sobre las canciones que quieres añadir a la lista para cantarlas.</p>
+
+<div id="listaCanciones">
+    {{videos}}
+</div>
+
+<script>
+    async function add(event) {
+        console.log(event)
+        event.preventDefault();
+        const res = await fetch('/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                video_id: event.target.id,
+                name: event.target.dataset.name,
+                title: event.target.dataset.title
+            })
+        });
+        Toastify({
+            text: "Canción añadida. 🎤En breve te avisamos para subas a cantar 🎤",
+            duration: 3000,
+            gravity: "top", // `top` or `bottom`
+            position: "center", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+        }).showToast();
+    }
+</script>
+</body>
+</html>

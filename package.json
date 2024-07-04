@@ -1,0 +1,20 @@
+{
+  "name": "karaoke",
+  "version": "1.0.0",
+  "description": "buscador de canciones de karaoke",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "gtts": "^0.2.1",
+    "youtube-search-without-api-key": "^2.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

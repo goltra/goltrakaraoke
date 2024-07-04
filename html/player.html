@@ -1,0 +1,94 @@
+<html>
+<head>
+    <title>Player</title>
+    <style>
+        {{stylesheet}}
+    </style>
+</head>
+<body>
+
+<script src="http://www.youtube.com/player_api"></script>
+
+<script>
+
+    // create youtube player
+    var player;
+
+    function onYouTubePlayerAPIReady() {
+        player = new YT.Player('player', {
+            width: window.innerWidth - 40,
+            height: window.innerHeight - 40,
+            videoId: '{{video_id}}',
+            events: {
+                onReady: onPlayerReady,
+                onStateChange: onPlayerStateChange
+            }
+        });
+    }
+
+    // autoplay video
+    function onPlayerReady(event) {
+        setTimeout(() => {
+            event.target.playVideo();
+        }, 7000);
+    }
+
+    // when video ends
+    function onPlayerStateChange(event) {
+        if (event.data === 0) {
+            next();
+        }
+    }
+
+    function next() {
+        const t = Date.now();
+        setTimeout(() => {
+            window.location.href = '/play?t=' + t;
+        }, 3000);
+    }
+
+    function speak(text) {
+        if (!('speechSynthesis' in window)) {
+            console.error('Speech Synthesis API not supported in this browser.');
+            return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        speak('{{textToSpeak}}');
+        setTimeout(() => {
+            const modal = document.getElementById('capa-modal');
+            modal.classList.add('hide');
+            setTimeout(() => {
+                modal.remove();
+            }, 3000);
+        }, 5000);
+    });
+</script>
+
+<div id="capa-modal" class="modal">
+    <div class="modal-content">
+        <h1>{{textToSpeak}}</h1>
+    </div>
+</div>
+<div id="player"></div>
+<div style="
+    background: rgba(35,35,35,.9);
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-top: 0;
+    height: 25px;
+    border: white 1px solid;
+    text-align: center;
+    box-shadow: 2px 2px 1px silver;
+    ">
+    <p style="margin:0; cursor:pointer;" onclick="next()">Pasar a la siguiente canción =></p>
+</div>
+
+
+</body>
+</html>

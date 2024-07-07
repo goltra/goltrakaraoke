@@ -66,18 +66,26 @@ router.get('/canciones-pedidas', (req, res) => {
     list.forEach(item => {
         if (item === '') return;
         i = item.split('\t');
-        result += '<p><strong> Cantante: </strong><br>' + i[1] + '<br> <strong>Canción:</strong><br>' + i[3] + '</p>';
+        result += '<div class="cancion"><p style="padding-top:0"><strong><u> Cantante:</u> </strong><br>' + i[1] + '</p><p style="margin-top: 0; padding-top:0"><strong><u>Canción:</u></strong><br>' + i[3] + '</p></div>';
     });
 
     htmlData = htmlData.replace('{{canciones_pedidas}}', result);
     res.send(htmlData);
 });
 
+router.get('/next', (req, res) => {
+    const result = nextSong();
+    res.header('Content-Type', 'application/json')
+    res.send(result);
+});
+
 const readHtml = (htmlFileName) => {
     const css =fs.readFileSync('./html/styles.css', 'utf8');
+    const menu = fs.readFileSync('./html/menu.html', 'utf8');
     let data = fs.readFileSync(htmlFileName, 'utf8');
 
     data =  data.replace('{{stylesheet}}', css);
+    data = data.replace('{{menu}}', menu);
     return data;
 };
 
@@ -120,14 +128,7 @@ const nextSong = () => {
         const singer = nextSong.split('\t')[1];
         fs.writeFileSync('list.txt', list.join('\n'));
         console.log('nextSong', id)
-        const gTTS = require('gtts');
-        var gtts = new gTTS('Cantante:' + singer + ', Canción:' + title, 'es');
-        gtts.save('./tmp/hello.mp3', function (err, result) {
-            if(err) { throw new Error(err) }
-            console.log('Success! Open file /tmp/hello.mp3 to hear result.');
-        });
-
-        return {id, title, singer};
+       return {id, title, singer};
     } catch (error) {
         console.log('error nextSong', error);
         return null;

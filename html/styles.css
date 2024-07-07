@@ -1,27 +1,35 @@
-body{
-    background: #1e1d1d;
+body {
+    background: #001c27;
     color: white;
 }
-#frmSearch{
+
+#frmSearch {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
-    justify-content: center;
+    justify-content: flex-start;
 }
-#frmSearch label{
-    font-size: xxx-large;
+
+#frmSearch label {
+    font-size: x-large;
 }
-#frmSearch input{
-    font-size: xx-large;
+
+#frmSearch input {
+    font-size: large;
 }
-a{
+
+a {
     color: silver;
     font-weight: bolder;
 }
+
 #listaCanciones {
     display: flex;
     flex-direction: column;
+}
+.canciones-pedidas{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 button {
@@ -66,9 +74,10 @@ button:disabled {
     cursor: not-allowed;
     opacity: 1;
 }
+
 .modal {
     position: absolute;
-    top:0;
+    top: 0;
     right: 0;
     bottom: 0;
     left: 0;
@@ -78,6 +87,7 @@ button:disabled {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
 }
+
 .modal-content {
     background-color: white;
     padding: 20px;
@@ -86,16 +96,50 @@ button:disabled {
     text-align: center;
     color: #626060;
 }
-@keyframes fadeOut{
-    from{
+
+@keyframes fadeOut {
+    from {
         opacity: 1;
     }
-    to{
+    to {
         opacity: 0;
-        display:none;
+        display: none;
     }
 }
 
-.hide{
+.hide {
     animation: fadeOut 2s forwards;
+}
+
+.cancion {;
+    margin-top: 10px;
+    margin-left:12px;
+    margin-right:12px;
+    border: 1px solid #bba8a8;
+    border-radius: 10px;
+}
+
+h1 {
+    padding: 10px;
+}
+
+p {
+    padding: 10px;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #222222;
+    color: white;
+    padding: 10px;
+    list-style: none;
+}
+
+nav li {
+    margin: 0 10px;
+    border: #DDDDDD 1px solid;
+    border-radius: 5px;
+    padding: 0 10px;
 }

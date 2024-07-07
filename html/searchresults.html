@@ -1,5 +1,8 @@
 <html>
 <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
     <title>Search Results</title>
     <style>
         {{stylesheet}}
@@ -8,12 +11,15 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
+<header>
+    {{menu}}
+</header>
 <h1>Resultado de la búsqueda</h1>
 <div>
-    <a href="/">Volver a buscar</a>
+    <a style="font-size: x-large" href="/"><< Volver a buscar</a>
 </div>
-<p style="font-size: x-large">Hola {{singer}}, aquí tienes los resultados de tu búsqueda.
-    Pulsa sobre las canciones que quieres añadir a la lista para cantarlas.</p>
+<p style="font-size: large;">Hola <strong><u>{{singer}}</u></strong>, aquí tienes los resultados de tu búsqueda.
+    <br>Pulsa sobre las canciones que quieres añadir a la lista para cantarlas.</p>
 
 <div id="listaCanciones">
     {{videos}}

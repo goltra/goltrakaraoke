@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/search', (req, res) => {
-    const {title, name} = req.body;
+    const { title, name } = req.body;
     search(title).then(data => {
         const result = data.map(item => {
             const titulo = item.title;
@@ -27,13 +27,13 @@ router.post('/search', (req, res) => {
 })
 
 router.get('/play', (req, res) => {
-    const {t} = req.query;
+    const { t } = req.query;
     // si te no esta definida, debe volver a cargar /play pero pasando el parametro t con un timestamp
     if (!t) {
         res.redirect('/play?t=' + new Date().getTime());
         return;
     }
-    const {id,title,singer} = nextSong();
+    const { id, title, singer } = nextSong();
     if (!id) {
         let htmlData = readHtml('./html/no-song-to-play.html');
         res.send(htmlData);
@@ -51,10 +51,10 @@ router.post('/add', (req, res) => {
     console.log('get add', req.body);
     const resultWrite = addToList(req.body.name, req.body.video_id, req.body.title);
     if (resultWrite) {
-        const result = {'ok': true, 'reason': 'video added to list'};
+        const result = { 'ok': true, 'reason': 'video added to list' };
         res.send(JSON.stringify(result));
     } else {
-        const result = {'ok': false, 'reason': 'error adding video to list'};
+        const result = { 'ok': false, 'reason': 'error adding video to list' };
         res.send(JSON.stringify(result));
     }
 });
@@ -63,14 +63,32 @@ router.get('/canciones-pedidas', (req, res) => {
     let htmlData = readHtml('./html/canciones-pedidas.html');
     let result = "";
     const list = readList();
-    list.forEach(item => {
+    list.forEach((item, indice) => {
         if (item === '') return;
         i = item.split('\t');
-        result += '<div class="cancion"><p style="padding-top:0"><strong><u> Cantante:</u> </strong><br>' + i[1] + '</p><p style="margin-top: 0; padding-top:0"><strong><u>Canción:</u></strong><br>' + i[3] + '</p></div>';
+        result += `<div class="cancion" id="div-cancion_${indice}">
+                    <p style="padding-top:0"><strong><u> Cantante:</u> </strong>
+                        <button class="btn-delete-song" onclick="eliminarCancion(${indice})" id="btn-delete-song_${indice}">x</button><br>${i[1]}
+                    </p>
+                    <p style="margin-top: 0; padding-top:0"><strong><u>Canción:</u></strong><br>${i[3]}</p>
+                    </div>`;
     });
 
     htmlData = htmlData.replace('{{canciones_pedidas}}', result);
     res.send(htmlData);
+});
+
+router.post('/delsong', (req, res) => {
+    const cancion = req.body;
+    try {
+        const list = readList();
+        list.splice(cancion.index, 1);
+        fs.writeFileSync('list.txt', list.join('\n'));
+        res.status(200).send({ message: 'Canción eliminada exitosamente.' });
+    } catch (error) {
+        console.log('error Delete song', error);
+        return null;
+    }
 });
 
 router.get('/next', (req, res) => {
@@ -80,11 +98,11 @@ router.get('/next', (req, res) => {
 });
 
 const readHtml = (htmlFileName) => {
-    const css =fs.readFileSync('./html/styles.css', 'utf8');
+    const css = fs.readFileSync('./html/styles.css', 'utf8');
     const menu = fs.readFileSync('./html/menu.html', 'utf8');
     let data = fs.readFileSync(htmlFileName, 'utf8');
 
-    data =  data.replace('{{stylesheet}}', css);
+    data = data.replace('{{stylesheet}}', css);
     data = data.replace('{{menu}}', menu);
     return data;
 };
@@ -128,11 +146,13 @@ const nextSong = () => {
         const singer = nextSong.split('\t')[1];
         fs.writeFileSync('list.txt', list.join('\n'));
         console.log('nextSong', id)
-       return {id, title, singer};
+        return { id, title, singer };
     } catch (error) {
         console.log('error nextSong', error);
         return null;
     }
-}
+};
+
+
 
 module.exports = router;

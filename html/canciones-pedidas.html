@@ -1,18 +1,43 @@
 <html>
+
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Canciones Pedidas</title>
     <style>
-    {{stylesheet}}
+        {{stylesheet}}
     </style>
 </head>
+
 <body>
-<header>
-    {{menu}}
-</header>
-<h1>Canciones Pedidas</h1>
-<div class="canciones-pedidas">
-    {{canciones_pedidas}}
-</div>
+    <header>
+        {{menu}}
+    </header>
+    <h1>Canciones Pedidas</h1>
+    <div class="canciones-pedidas">
+        {{canciones_pedidas}}
+    </div>
+    <script>
+        async function eliminarCancion(index) {
+            try {
+                const del = await fetch('/delsong', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        index: parseInt(index, 10)
+                    })
+
+                });
+                if (del.ok){
+                    location.reload();
+                }
+            } catch (error) {
+                alert("Hubo un error al intentar eliminar la canción. Inténtelo de nuevo más tarde");
+            }
+
+        };
+    </script>
 </body>
+
 </html>

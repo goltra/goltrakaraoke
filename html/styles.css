@@ -100,6 +100,14 @@ button:disabled {
   color: #626060;
 }
 
+.btn-delete-song {
+  height: 25px;
+  width: 25px;
+  margin: 0;
+  padding: 0 0 3px 0;
+  float: right;
+  font-size: 20px;
+}
 @keyframes fadeOut {
   from {
     opacity: 1;

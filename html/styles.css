@@ -1,21 +1,17 @@
 body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   background: #001c27;
   color: white;
+
 }
 
-#frmSearch {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+h1 {
+  padding: 10px;
+  text-align: center;
 }
 
-#frmSearch label {
-  font-size: x-large;
-}
-
-#frmSearch input {
-  font-size: large;
+p {
+  padding: 10px;
 }
 
 a {
@@ -24,13 +20,21 @@ a {
   text-decoration: none;
 }
 
-#listaCanciones {
+nav {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #222222;
+  color: white;
+  padding: 10px;
+  list-style: none;
 }
-.canciones-pedidas {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+nav li {
+  margin: 0 10px;
+  border: #dddddd 1px solid;
+  border-radius: 5px;
+  padding: 0 10px;
 }
 
 button {
@@ -40,7 +44,7 @@ button {
   box-sizing: border-box;
   color: #222222;
   cursor: pointer;
-  display: inline-block;
+  display: block;
   font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto,
     'Helvetica Neue', sans-serif;
   font-size: 16px;
@@ -78,6 +82,130 @@ button:disabled {
   opacity: 1;
 }
 
+
+/*welcome*/
+.container__mainscreen {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.section__buscaCanciones {
+  min-width: 70%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3vh;
+}
+
+.section__buscaCanciones img {
+  width: 70%;
+  display: block;
+  margin: auto;
+}
+
+.section__listaCantantes {
+  font-size: 16px;
+  max-width: 30%;
+  margin-top: 10vh;
+}
+
+.section__listaCantantes li {
+  height: 2em;
+  font-size: 1.3em;
+  margin-bottom: 0.3em;
+}
+
+#frmSearch {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: flex-start;
+}
+
+#frmSearch fieldset {
+  border: none;
+}
+
+#frmSearch legend {
+  font-size: large;
+  padding: 10px;
+}
+
+#frmSearch label {
+  font-size: x-large;
+  display: block;
+  margin: 0;
+}
+
+#frmSearch input {
+  font-size: large;
+  margin-bottom: 15px;
+}
+
+#frmSearch button {
+  margin: auto;
+  margin-top: 5px;
+}
+
+
+/*search results*/
+.search_a {
+  font-size: x-large;
+}
+
+.search_p {
+  font: large;
+}
+
+#listaCanciones {
+  display: flex;
+  flex-direction: column;
+}
+
+
+/*canciones pedidas*/
+.canciones-pedidas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.cancion {
+  margin-top: 10px;
+  margin-left: 12px;
+  margin-right: 12px;
+  border: 1px solid #bba8a8;
+  border-radius: 10px;
+}
+
+.btn-delete-song {
+  height: 25px;
+  width: 25px;
+  margin: 0;
+  padding: 0 0 3px 0;
+  float: right;
+  font-size: 20px;
+}
+
+/*no song to play*/
+.p__noSong {
+  width: 100%;
+  text-align: center;
+}
+
+.p__noSong-tittle {
+  font-size: 25px;
+  margin: 0;
+}
+
+.p__noSong-sub {
+  margin: 0;
+  padding-top: 0;
+}
+
+
+/*player*/
 .modal {
   position: absolute;
   top: 0;
@@ -100,92 +228,6 @@ button:disabled {
   color: #626060;
 }
 
-.btn-delete-song {
-  height: 25px;
-  width: 25px;
-  margin: 0;
-  padding: 0 0 3px 0;
-  float: right;
-  font-size: 20px;
-}
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    display: none;
-  }
-}
-
-.hide {
-  animation: fadeOut 2s forwards;
-}
-
-.cancion {
-  margin-top: 10px;
-  margin-left: 12px;
-  margin-right: 12px;
-  border: 1px solid #bba8a8;
-  border-radius: 10px;
-}
-
-h1 {
-  padding: 10px;
-}
-
-p {
-  padding: 10px;
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #222222;
-  color: white;
-  padding: 10px;
-  list-style: none;
-}
-
-nav li {
-  margin: 0 10px;
-  border: #dddddd 1px solid;
-  border-radius: 5px;
-  padding: 0 10px;
-}
-
-.p__noSong {
-  width: 100%;
-  text-align: center;
-}
-
-.p__noSong-tittle {
-  font-size: 25px;
-  margin: 0;
-}
-
-.p__noSong-sub {
-  margin: 0;
-  padding-top: 0;
-}
-
-.img__goltraKaraoke {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-}
-
-.img__goltraKaraoke img {
-  width: 50%;
-}
-
-.formTittle {
-  font-size: large;
-  padding: 10px;
-}
-
 .div__nextSong {
   background: black;
   height: 35px;
@@ -204,10 +246,18 @@ nav li {
   cursor: pointer;
 }
 
-.search_a {
-  font-size: x-large;
+.hide {
+  animation: fadeOut 2s forwards;
 }
 
-.search_p {
-  font: large;
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    display: none;
+  }
 }

@@ -24,7 +24,15 @@ router.post('/search', (req, res) => {
         htmlData = htmlData.replace('{{singer}}', name);
         res.send(htmlData);
     })
-})
+});
+
+router.post('/lista-canciones',(req, res)=> {
+         const lista= readList();
+         res.send(lista);
+         lista.forEach((item)=>{
+            console.log(item);
+         })
+});
 
 router.get('/play', (req, res) => {
     const { t } = req.query;

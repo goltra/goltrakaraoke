@@ -26,12 +26,9 @@ router.post('/search', (req, res) => {
     })
 });
 
-router.post('/lista-canciones',(req, res)=> {
-         const lista= readList();
-         res.send(lista);
-         lista.forEach((item)=>{
-            console.log(item);
-         })
+router.post('/lista-canciones', (req, res) => {
+    const lista = readList();
+    res.send(lista);
 });
 
 router.get('/play', (req, res) => {

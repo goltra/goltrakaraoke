@@ -30,7 +30,6 @@
 
        async function actualizaCantantes() {
             const cantantesLi = document.querySelectorAll('#singersList li');
-            console.log(cantantesLi);
             try {
   
                const response = await fetch('/lista-canciones', {
@@ -52,7 +51,6 @@
                         titulo: partes[3]
                     };
                 })
-                console.log(canciones)
                 if (canciones && cantantesLi.length > 0) {
                     cantantesLi.forEach((li, index) => {
                         if (index < listaCanciones.length) {

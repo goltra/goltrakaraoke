@@ -2,7 +2,7 @@ body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   background: #001c27;
   color: white;
-
+  font-size: 16px;
 }
 
 h1 {
@@ -82,7 +82,6 @@ button:disabled {
   opacity: 1;
 }
 
-
 /*welcome*/
 .container__mainscreen {
   height: 100%;
@@ -90,10 +89,11 @@ button:disabled {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .section__buscaCanciones {
-  min-width: 70%;
+  flex-grow: 6;
   justify-content: center;
   align-items: center;
   margin-top: 3vh;
@@ -106,15 +106,19 @@ button:disabled {
 }
 
 .section__listaCantantes {
-  font-size: 16px;
-  max-width: 30%;
+  flex-grow: 3;
+  font-size: 1em;
   margin-top: 10vh;
+}
+
+.section__listaCantantes h2 {
+  text-align: center;
 }
 
 .section__listaCantantes li {
   height: 2em;
   font-size: 1.3em;
-  margin-bottom: 0.3em;
+  margin-bottom: 0.5em;
 }
 
 #frmSearch {
@@ -149,7 +153,6 @@ button:disabled {
   margin-top: 5px;
 }
 
-
 /*search results*/
 .search_a {
   font-size: x-large;
@@ -163,7 +166,6 @@ button:disabled {
   display: flex;
   flex-direction: column;
 }
-
 
 /*canciones pedidas*/
 .canciones-pedidas {
@@ -203,7 +205,6 @@ button:disabled {
   margin: 0;
   padding-top: 0;
 }
-
 
 /*player*/
 .modal {
@@ -250,7 +251,6 @@ button:disabled {
   animation: fadeOut 2s forwards;
 }
 
-
 @keyframes fadeOut {
   from {
     opacity: 1;
@@ -259,5 +259,20 @@ button:disabled {
   to {
     opacity: 0;
     display: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .section__listaCantantes {
+    margin-top: 0;
+
+    max-width: 600px;
+  }
+  .section__buscaCanciones::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #f7f7f7;
   }
 }

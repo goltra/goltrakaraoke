@@ -42,19 +42,10 @@
                     throw new Error(`Error: ${response.statusText}`);
                 }
                 const listaCanciones = await response.json();
-                const canciones = listaCanciones.map(item => {
-                    const partes = item.split('\t');
-                    return {
-                        timestamp: partes[0],
-                        cantante: partes[1],
-                        id: partes[2],
-                        titulo: partes[3]
-                    };
-                })
-                if (canciones && cantantesLi.length > 0) {
+                if (listaCanciones && cantantesLi.length > 0) {
                     cantantesLi.forEach((li, index) => {
                         if (index < listaCanciones.length) {
-                            li.textContent = canciones[index].cantante;  // Ajustar según el formato de tus datos
+                            li.textContent = listaCanciones[index].singer;  // Ajustar según el formato de tus datos
                         }
                         else{
                             li.textContent ="";
@@ -88,6 +79,8 @@
                     <input id="name" name="name" type="text" placeholder="Quién va a a cantar"/>
                     <label for="title">Título:</label>
                     <input id="title" name="title" type="text" placeholder="Canción a buscar" />
+                    <label for="semitones">Semitonos:</label>
+                    <input id="semitones" name="semitones" type="number" placeholder="Semitonos" />
                     <button>Buscar canciones</button>
                 </fieldset>
             </form>

@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require("fs");
 const router = express.Router();
 const search = require('./search');
+const {readList, addToList, nextSong, del} = require('./fileshandler');
 
 // Define a route for the home page
 router.get('/', (req, res) => {
@@ -10,14 +11,14 @@ router.get('/', (req, res) => {
 });
 
 router.post('/search', (req, res) => {
-    const { title, name } = req.body;
+    const {title, name, semitones} = req.body;
+    console.log('semitones',semitones,req.body)
     search(title).then(data => {
         const result = data.map(item => {
+            console.log('semitones +1',semitones)
             const titulo = item.title;
             const id = item.id.videoId;
-            return '<button data-title="' + titulo + '" data-name="' + name + '" id="' + id + '" onclick="add(event)">  ' +
-                titulo +
-                '</button>';
+            return `<button data-semitones= "${semitones}" data-title= "${titulo}" data-name= "${name}" id= "${id}" onclick="add(event)"> ${titulo}</button>`;
         });
         let htmlData = readHtml('./html/searchresults.html');
         htmlData = htmlData.replace('{{videos}}', result.join('<br>'));
@@ -26,19 +27,19 @@ router.post('/search', (req, res) => {
     })
 });
 
-router.post('/lista-canciones', (req, res) => {
-    const lista = readList();
+router.post('/lista-canciones', async (req, res) => {
+    const lista = await readList();
     res.send(lista);
 });
 
 router.get('/play', (req, res) => {
-    const { t } = req.query;
+    const {t} = req.query;
     // si te no esta definida, debe volver a cargar /play pero pasando el parametro t con un timestamp
     if (!t) {
         res.redirect('/play?t=' + new Date().getTime());
         return;
     }
-    const { id, title, singer } = nextSong();
+    const {id, title, singer} = nextSong();
     if (!id) {
         let htmlData = readHtml('./html/no-song-to-play.html');
         res.send(htmlData);
@@ -54,28 +55,27 @@ router.get('/play', (req, res) => {
 
 router.post('/add', (req, res) => {
     console.log('get add', req.body);
-    const resultWrite = addToList(req.body.name, req.body.video_id, req.body.title);
+    const resultWrite = addToList(req.body.name, req.body.video_id, req.body.title, req.body.semitones);
     if (resultWrite) {
-        const result = { 'ok': true, 'reason': 'video added to list' };
+        const result = {'ok': true, 'reason': 'video added to list'};
         res.send(JSON.stringify(result));
     } else {
-        const result = { 'ok': false, 'reason': 'error adding video to list' };
+        const result = {'ok': false, 'reason': 'error adding video to list'};
         res.send(JSON.stringify(result));
     }
 });
 
-router.get('/canciones-pedidas', (req, res) => {
+router.get('/canciones-pedidas', async (req, res) => {
     let htmlData = readHtml('./html/canciones-pedidas.html');
     let result = "";
-    const list = readList();
+    const list = await readList();
+
     list.forEach((item, indice) => {
-        if (item === '') return;
-        i = item.split('\t');
         result += `<div class="cancion" id="div-cancion_${indice}">
                     <p style="padding-top:0"><strong><u> Cantante:</u> </strong>
-                        <button class="btn-delete-song" onclick="eliminarCancion(${indice})" id="btn-delete-song_${indice}">x</button><br>${i[1]}
+                        <button class="btn-delete-song" onclick="eliminarCancion(${item.$loki})" id="btn-delete-song_${indice}">x</button><br>${item.singer}
                     </p>
-                    <p style="margin-top: 0; padding-top:0"><strong><u>Canción:</u></strong><br>${i[3]}</p>
+                    <p style="margin-top: 0; padding-top:0"><strong><u>Canción:</u></strong><br>${item.title}</p>
                     </div>`;
     });
 
@@ -83,15 +83,16 @@ router.get('/canciones-pedidas', (req, res) => {
     res.send(htmlData);
 });
 
-router.post('/delsong', (req, res) => {
-    const cancion = req.body;
+router.post('/delsong', async (req, res) => {
+    const data = req.body;
     try {
-        const list = readList();
-        list.splice(cancion.index, 1);
-        fs.writeFileSync('list.txt', list.join('\n'));
-        res.status(200).send({ message: 'Canción eliminada exitosamente.' });
+        const result = await del(data.index);
+        if (result)
+            res.status(200).send({message: 'Canción eliminada exitosamente.'});
+        else
+            res.status(400).send({message: 'Ocurrió algún error al intentar eliminar la canción.'});
     } catch (error) {
-        console.log('error Delete song', error);
+        res.status(400).send({message: 'Ocurrió algún error al intentar eliminar la canción.'});
         return null;
     }
 });
@@ -111,53 +112,5 @@ const readHtml = (htmlFileName) => {
     data = data.replace('{{menu}}', menu);
     return data;
 };
-
-const addToList = (name, video_id, titulo) => {
-    const date = new Date();
-    try {
-        fs.writeFileSync('list.txt', date.toISOString() + '\t' + name + '\t' + video_id + '\t' + titulo + '\n',
-            {
-                flag: 'a',
-                encoding: 'utf8'
-            }
-        );
-        return true
-    } catch (error) {
-        console.log('error', error);
-        return false;
-    }
-};
-
-const readList = () => {
-    try {
-        const data = fs.readFileSync('list.txt', 'utf8').split('\n');
-        return data;
-    } catch (error) {
-        console.log('error', error);
-        return [];
-    }
-};
-
-/**
- * devuelve el primer id de la lista de reproducción y borra la linea del fichero list.txt
- */
-const nextSong = () => {
-    try {
-        const list = readList();
-        if (list.length === 0) return null;
-        const nextSong = list.shift();
-        const id = nextSong.split('\t')[2];
-        const title = nextSong.split('\t')[3];
-        const singer = nextSong.split('\t')[1];
-        fs.writeFileSync('list.txt', list.join('\n'));
-        console.log('nextSong', id)
-        return { id, title, singer };
-    } catch (error) {
-        console.log('error nextSong', error);
-        return null;
-    }
-};
-
-
 
 module.exports = router;

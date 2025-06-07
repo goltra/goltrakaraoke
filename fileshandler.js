@@ -11,6 +11,7 @@ const db = new Loki('karaoke.db', {
     autosaveInterval: 1000, // Guardar cada 4 segundos
 });
 let songs = null;
+
 function databaseInitialize() {
     songs = db.getCollection('songs');
     if (!songs) {
@@ -58,23 +59,21 @@ const addToList = (name, video_id, titulo, semitones = 0) => {
 /**
  * devuelve el primer id de la lista de reproducción y borra la linea del fichero list.txt
  */
-const nextSong = async (removeAfterRead = true) => {
+const nextSong = async (status = ProcessStatusSong.Processed) => {
     try {
-        // TODO: pasar a la función el estatus de las siguiente canción que queremos obtener
-        // esto será diferente si nextsong lo llama la api del cliente o la funcíon de procesado de
-        // canciones.
-        const song = findOne({status: ProcessStatusSong.Unprocessed});
+        const song = findOne({status: status});
         if (!song) return null;
-        /*if (removeAfterRead === true)
-            fs.writeFileSync('list.txt', list.join('\n'));*/
+        if (status === ProcessStatusSong.Processed) {
+            console.log('nextSong borrando', song);
+            await del(song.index);
+        }
         return song;
     } catch (error) {
-        console.log('error nextSong', error);
         return null;
     }
 };
 
-const update = async (documento)=>{
+const update = async (documento) => {
     try {
         const result = songs.update(documento);
         return true;

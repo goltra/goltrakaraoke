@@ -3,6 +3,7 @@ const fs = require("fs");
 const router = express.Router();
 const search = require('./search');
 const {readList, addToList, nextSong, del} = require('./fileshandler');
+const {ProcessStatusSong} = require("./constants");
 
 // Define a route for the home page
 router.get('/', (req, res) => {
@@ -32,14 +33,15 @@ router.post('/lista-canciones', async (req, res) => {
     res.send(lista);
 });
 
-router.get('/play', (req, res) => {
+router.get('/play', async (req, res) => {
     const {t} = req.query;
     // si te no esta definida, debe volver a cargar /play pero pasando el parametro t con un timestamp
     if (!t) {
         res.redirect('/play?t=' + new Date().getTime());
         return;
     }
-    const {id, title, singer} = nextSong();
+    const {id, title, singer} = await nextSong(ProcessStatusSong.Processed);
+
     if (!id) {
         let htmlData = readHtml('./html/no-song-to-play.html');
         res.send(htmlData);

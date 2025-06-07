@@ -14,8 +14,9 @@ const tempDir = path.join(__dirname, 'temp');
 const ytDlpWrap = new YTDlpWrap();
 
 async function processVideo(documento) {
+    console.time("processVideo");
     const youtubeVideoId = documento.id;
-    const semitonesNum = parseInt(documento.semitones);
+    const semitonesNum = documento.semitones && !isNaN(documento.semitones) ? parseInt(documento.semitones) : 0;
     const singerName = documento.singer;
     const songTitle = documento.title;
 
@@ -27,19 +28,21 @@ async function processVideo(documento) {
     const originalAudioPath = path.join(tempDir, `${videoFilePrefix}_original_audio.m4a`);
     const shiftedAudioPath = path.join(tempDir, `${videoFilePrefix}_shifted_audio.m4a`);
     const tempVideoPath = path.join(tempDir, `${videoFilePrefix}_temp_video.mp4`);
-    const finalVideoFilename = `${videoFilePrefix}_${semitonesNum}.mp4`;
+    const finalVideoFilename = documento.filename;
     const finalVideoPath = path.join(downloadsDir, finalVideoFilename);
     const finalVideoUrl = `/downloads/${finalVideoFilename}`;
-
+    const cookiesFilePath = path.join(__dirname, 'cookies.txt');
     console.log(`[PROCESS_VIDEO] For: ${singerName} - ${songTitle}, URL: ${youtubeUrl}, Pitch: ${semitonesNum}`);
     try {
         await Promise.all([
-            new Promise((resolve, reject) => ytDlpWrap.exec([youtubeUrl, '-f', 'bestaudio[ext=m4a]/bestaudio', '-o', originalAudioPath, '--no-playlist', '--socket-timeout', '15']).on('close', resolve).on('error', (err) => reject(new Error(`Audio DL: ${err.message}`)))),
-            new Promise((resolve, reject) => ytDlpWrap.exec([youtubeUrl, '-f', 'bestvideo[ext=mp4]/bestvideo', '--no-audio', '-o', tempVideoPath, '--no-playlist', '--socket-timeout', '15']).on('close', resolve).on('error', (err) => reject(new Error(`Video DL: ${err.message}`))))
+            new Promise((resolve, reject) => ytDlpWrap.exec([youtubeUrl, '-f', 'bestaudio[ext=m4a]/bestaudio', '-o', originalAudioPath, '--no-playlist', '--socket-timeout', '15', '--cookies', cookiesFilePath]).on('close', resolve).on('error', (err) => reject(new Error(`Audio DL: ${err.message}`)))),
+            new Promise((resolve, reject) => ytDlpWrap.exec([youtubeUrl, '-f', 'bestvideo[ext=mp4]/bestvideo', '--no-audio', '-o', tempVideoPath, '--no-playlist', '--socket-timeout', '15', '--cookies', cookiesFilePath]).on('close', resolve).on('error', (err) => reject(new Error(`Video DL: ${err.message}`))))
         ]);
 
+
         const pitchFactor = Math.pow(2, semitonesNum / 12);
-        const audioFilters = [`asetrate=44100*${pitchFactor}`, 'aresample=44100'];
+        const targetSampleRate = Math.round(44100 * pitchFactor);
+        const audioFilters = [`asetrate=${targetSampleRate}`, 'aresample=44100'];
         if (semitonesNum !== 0 && Math.abs(pitchFactor - 1) > 0.001) {
             let atempoFactor = 1 / pitchFactor;
             atempoFactor = Math.max(0.5, Math.min(100, atempoFactor));
@@ -53,7 +56,9 @@ async function processVideo(documento) {
 
         await new Promise((resolve, reject) => {
             ffmpeg().input(tempVideoPath).input(shiftedAudioPath)
-                .outputOptions(['-map 0:v:0?', '-map 1:a:0', '-c:v copy', '-c:a aac', '-strict -2', '-shortest'])
+                .outputOptions(['-map 0:v:0?', '-map 1:a:0', '-c:v libx264',
+                    '-preset veryfast',
+                    '-crf 23', '-c:a copy', '-strict -2', '-shortest'])
                 .on('end', resolve).on('error', (err) => reject(new Error(`FFmpeg Mux: ${err.message}`)))
                 .save(finalVideoPath);
         });
@@ -66,6 +71,7 @@ async function processVideo(documento) {
         });
         console.log(`[PROCESS_VIDEO] Success: ${finalVideoUrl}`);
         await changeStatusProcessSong(documento, ProcessStatusSong.Processed);
+        console.timeEnd("processVideo");
         return {processedVideoUrl: finalVideoUrl};
     } catch (error) {
         console.error(`[PROCESS_VIDEO] Error for ${youtubeUrl}:`, error);
@@ -87,8 +93,8 @@ async function changeStatusProcessSong(documento, status) {
 }
 
 async function nextSongToProcess() {
-    const next = await nextSong(false);
-    if(!next) {
+    const next = await nextSong(ProcessStatusSong.Unprocessed);
+    if (!next) {
         console.log('[PROCESS_VIDEO]: No hay videos para procesar.')
         setTimeout(async () => await nextSongToProcess(), 5000);
         return;

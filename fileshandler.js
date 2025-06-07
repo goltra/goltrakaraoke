@@ -39,12 +39,14 @@ const findOne = (filter) => {
 
 const addToList = (name, video_id, titulo, semitones = 0) => {
     try {
+        console.log('addToList semitones is numeric', !isNaN(semitones))
         const item = {
             singer: name,
             id: video_id,
             title: titulo,
-            semitones: semitones,
+            semitones: isNaN(semitones) ? 0 : semitones,
             status: ProcessStatusSong.Unprocessed,
+            filename: `${video_id}_${semitones}.mp4`
         }
 
         const result = songs.insert(item);
@@ -65,7 +67,7 @@ const nextSong = async (status = ProcessStatusSong.Processed) => {
         if (!song) return null;
         if (status === ProcessStatusSong.Processed) {
             console.log('nextSong borrando', song);
-            await del(song.index);
+            //await del(song.index);
         }
         return song;
     } catch (error) {

@@ -13,10 +13,8 @@ router.get('/', (req, res) => {
 
 router.post('/search', (req, res) => {
     const {title, name, semitones} = req.body;
-    console.log('semitones',semitones,req.body)
     search(title).then(data => {
         const result = data.map(item => {
-            console.log('semitones +1',semitones)
             const titulo = item.title;
             const id = item.id.videoId;
             return `<button data-semitones= "${semitones}" data-title= "${titulo}" data-name= "${name}" id= "${id}" onclick="add(event)"> ${titulo}</button>`;
@@ -40,7 +38,7 @@ router.get('/play', async (req, res) => {
         res.redirect('/play?t=' + new Date().getTime());
         return;
     }
-    const {id, title, singer} = await nextSong(ProcessStatusSong.Processed);
+    const {id, title, singer} = await nextSong(ProcessStatusSong.Processed) ?? {};
 
     if (!id) {
         let htmlData = readHtml('./html/no-song-to-play.html');
@@ -99,9 +97,10 @@ router.post('/delsong', async (req, res) => {
     }
 });
 
-router.get('/next', (req, res) => {
-    const result = nextSong();
+router.get('/next', async(req, res) => {
+    const result = await  nextSong();
     res.header('Content-Type', 'application/json')
+    console.log('/next ha sido llamado y devuelve ', result);
     res.send(result);
 });
 

@@ -2,6 +2,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>goltra karaoke</title>
 </head>
 <style>
@@ -10,7 +11,50 @@
 
 <body>
 <script>
+
+
+    let sendButton = null;
     document.addEventListener('DOMContentLoaded', function () {
+        const SERVER_IP = 'localhost'; // O 'TU_DIRECCION_IP_LOCAL'
+        const PORT = 3000;
+        const WS_URL = `ws://${SERVER_IP}:${PORT}`;
+
+        const ws = new WebSocket(WS_URL);
+        sendButton = document.getElementById('sendButton');
+        ws.onopen = () => {
+            console.log('Conexión WebSocket abierta.');
+            //statusSpan.textContent = 'Conectado';
+            //statusSpan.className = 'status-connected';
+            //appendMessage('Sistema: Conectado al servidor.');
+            sendButton.disabled = false; // Habilitar el botón al conectar
+        };
+
+        ws.onmessage = (event) => {
+            console.log('Mensaje del servidor:', event.data);
+            //appendMessage(`Servidor: ${event.data}`);
+        };
+
+        ws.onclose = () => {
+            console.log('Conexión WebSocket cerrada.');
+            //statusSpan.textContent = 'Desconectado';
+            //statusSpan.className = 'status-disconnected';
+            //appendMessage('Sistema: Desconectado del servidor.');
+            sendButton.disabled = true; // Deshabilitar el botón al desconectar
+        };
+
+        ws.onerror = (error) => {
+            console.error('Error en WebSocket:', error);
+            //appendMessage(`Sistema: Error en la conexión - ${error.message}`, true);
+        };
+
+        sendButton.addEventListener('click', () => {
+            console.log('click')
+            sendButton.disabled = true;
+            ws.send('hola')
+            setTimeout(() => {
+                sendButton.disabled = false;
+            }, 5000)
+        })
         const form = document.getElementById('frmSearch');
         form.addEventListener('submit', function (event) {
             document.getElementById('section_loading').style.visibility = 'visible';
@@ -74,10 +118,11 @@
         const singer = song.singer.trim();
 
         if (singer !== 'ninguno' && title !== 'ninguno') {
-            console.log('no soy diferente')
+            sendButton.disabled=false;
             document.getElementById('currentSong').innerHTML = `
                         <div style="
                             display: flex;
+                            justify-content: center;
                             align-items: center;">
                                 <div>
                                     <img width="90px" src="/imgs/vinilo.webp" />
@@ -88,6 +133,7 @@
                                     </div>
                         </div>`;
         } else {
+            sendButton.disabled=true;
             document.getElementById('currentSong').innerHTML = "<p>No está sonando ninguna canción.</p>"
         }
     }
@@ -119,7 +165,13 @@
             </fieldset>
         </form>
     </section>
-    <section class="section_currentSong">
+    <section class="section_currentSong" style="display: flex; flex-direction: column">
+        <div style="width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;">
+            <button style="margin: 5px" id="sendButton"><span class="material-icons">sign_language</span></button>
+        </div>
         <div id="currentSong"></div>
     </section>
     <section class="section__listaCantantes">

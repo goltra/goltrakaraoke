@@ -121,7 +121,6 @@ router.post('/currentSong', (req, res) => {
 router.get('/getCurrentSong', (req, res) => {
     const fileText = fs.readFileSync('currentSong.txt', 'utf8');
     const data = fileText.split('\t');
-    console.log(data);
     res.send({title: data[0], singer: data[1]});
 })
 const readHtml = (htmlFileName) => {
@@ -172,7 +171,6 @@ const nextSong = () => {
         const title = nextSong.split('\t')[3];
         const singer = nextSong.split('\t')[1];
         fs.writeFileSync('list.txt', list.join('\n'));
-        console.log('nextSong', id)
         return {id, title, singer};
     } catch (error) {
         console.log('error nextSong', error);

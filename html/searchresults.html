@@ -22,9 +22,10 @@
 <div id="listaCanciones">
     {{videos}}
 </div>
+
 <script>
     async function add(event) {
-        console.log('event',event);
+        console.log(event)
         event.preventDefault();
         const res = await fetch('/add', {
             method: 'POST',
@@ -34,8 +35,7 @@
             body: JSON.stringify({
                 video_id: event.target.id,
                 name: event.target.dataset.name,
-                title: event.target.dataset.title,
-                semitones: event.target.dataset.semitones
+                title: event.target.dataset.title
             })
         });
         Toastify({

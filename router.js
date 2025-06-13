@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/search', (req, res) => {
-    const { title, name } = req.body;
+    const {title, name} = req.body;
     search(title).then(data => {
         const result = data.map(item => {
             const titulo = item.title;
@@ -32,13 +32,13 @@ router.post('/lista-canciones', (req, res) => {
 });
 
 router.get('/play', (req, res) => {
-    const { t } = req.query;
+    const {t} = req.query;
     // si te no esta definida, debe volver a cargar /play pero pasando el parametro t con un timestamp
     if (!t) {
         res.redirect('/play?t=' + new Date().getTime());
         return;
     }
-    const { id, title, singer } = nextSong();
+    const {id, title, singer} = nextSong();
     if (!id) {
         let htmlData = readHtml('./html/no-song-to-play.html');
         res.send(htmlData);
@@ -56,10 +56,10 @@ router.post('/add', (req, res) => {
     console.log('get add', req.body);
     const resultWrite = addToList(req.body.name, req.body.video_id, req.body.title);
     if (resultWrite) {
-        const result = { 'ok': true, 'reason': 'video added to list' };
+        const result = {'ok': true, 'reason': 'video added to list'};
         res.send(JSON.stringify(result));
     } else {
-        const result = { 'ok': false, 'reason': 'error adding video to list' };
+        const result = {'ok': false, 'reason': 'error adding video to list'};
         res.send(JSON.stringify(result));
     }
 });
@@ -89,7 +89,7 @@ router.post('/delsong', (req, res) => {
         const list = readList();
         list.splice(cancion.index, 1);
         fs.writeFileSync('list.txt', list.join('\n'));
-        res.status(200).send({ message: 'Canción eliminada exitosamente.' });
+        res.status(200).send({message: 'Canción eliminada exitosamente.'});
     } catch (error) {
         console.log('error Delete song', error);
         return null;
@@ -102,6 +102,28 @@ router.get('/next', (req, res) => {
     res.send(result);
 });
 
+/**
+ * Ep al que se conecta el cliente para anunciar la canción que está sonando en este momento
+ */
+router.post('/currentSong', (req, res) => {
+    try {
+        const data = req.body;
+        fs.writeFileSync('currentSong.txt', `${data.title} \t ${data.singer}`, {flag: 'w', encoding: 'utf8'});
+        console.log('currentSong', data);
+    } catch (e) {
+        console.log('Se ha enviado null')
+    }
+});
+
+/**
+ * Lee el fichero currentSong.txt si existe y devuelve un objeto con el cantante y el título de la canción.
+ */
+router.get('/getCurrentSong', (req, res) => {
+    const fileText = fs.readFileSync('currentSong.txt', 'utf8');
+    const data = fileText.split('\t');
+    console.log(data);
+    res.send({title: data[0], singer: data[1]});
+})
 const readHtml = (htmlFileName) => {
     const css = fs.readFileSync('./html/styles.css', 'utf8');
     const menu = fs.readFileSync('./html/menu.html', 'utf8');
@@ -151,13 +173,12 @@ const nextSong = () => {
         const singer = nextSong.split('\t')[1];
         fs.writeFileSync('list.txt', list.join('\n'));
         console.log('nextSong', id)
-        return { id, title, singer };
+        return {id, title, singer};
     } catch (error) {
         console.log('error nextSong', error);
         return null;
     }
 };
-
 
 
 module.exports = router;

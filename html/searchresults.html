@@ -3,7 +3,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="HandheldFriendly" content="true">
-    <title>Search Results</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Resultados de Búsqueda - Goltra Karaoke</title>
     <style>
         {{stylesheet}}
     </style>
@@ -14,13 +16,26 @@
 <header>
    <!-- {{menu}} -->
 </header>
-<h1>Resultado de la búsqueda</h1>
-<a class="search_a" href="/"><< Volver a buscar</a>
-<p class="search_p">Hola <strong>{{singer}}</strong>, aquí tienes los resultados de tu búsqueda.
-    <br>Pulsa sobre las canciones que quieres añadir a la lista para cantarlas.</p>
 
-<div id="listaCanciones">
-    {{videos}}
+<div class="container__mainscreen" style="padding-top: 20px;">
+    <h1>🎵 Resultados de Búsqueda</h1>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <a class="search_a" href="/">
+            <span class="material-icons" style="vertical-align: middle; font-size: 20px;">arrow_back</span>
+            Volver a buscar
+        </a>
+    </div>
+
+    <p class="search_p">
+        ¡Hola <strong>{{singer}}</strong>! 👋
+        <br>
+        Aquí tienes los resultados de tu búsqueda. Pulsa sobre las canciones que quieras añadir a la lista.
+    </p>
+
+    <div id="listaCanciones">
+        {{videos}}
+    </div>
 </div>
 
 <script>
@@ -39,11 +54,18 @@
             })
         });
         Toastify({
-            text: "Canción añadida. 🎤En breve te avisamos para subas a cantar 🎤",
-            duration: 3000,
-            gravity: "top", // `top` or `bottom`
-            position: "center", // `left`, `center` or `right`
-            stopOnFocus: true, // Prevents dismissing of toast on hover
+            text: "🎤 Canción añadida. En breve te avisamos para que subas a cantar!",
+            duration: 4000,
+            gravity: "top",
+            position: "center",
+            stopOnFocus: true,
+            style: {
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                borderRadius: "12px",
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: "500",
+                boxShadow: "0 10px 40px rgba(0, 0, 0, 0.5)"
+            }
         }).showToast();
     }
 </script>

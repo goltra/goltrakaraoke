@@ -1,6 +1,8 @@
 <html>
 <head>
-    <title>Player</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Reproduciendo - Goltra Karaoke</title>
     <style>
         {{stylesheet}}
     </style>
@@ -73,12 +75,19 @@
 
 <div id="capa-modal" class="modal">
     <div class="modal-content">
+        <div style="font-size: 4rem; margin-bottom: 20px;">🎤</div>
         <h1>{{textToSpeak}}</h1>
+        <p style="margin-top: 15px; font-size: 1.2rem; opacity: 0.9;">¡Que lo disfrutes!</p>
     </div>
 </div>
+
 <div id="player"></div>
+
 <div class="div__nextSong">
-    <p class="p__nextSong" onclick="next()">Pasar a la siguiente canción =></p>
+    <p class="p__nextSong" onclick="next()">
+        <span class="material-icons" style="vertical-align: middle; margin-right: 5px;">skip_next</span>
+        Siguiente canción
+    </p>
 </div>
 
 

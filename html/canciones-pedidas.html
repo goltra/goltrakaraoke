@@ -2,7 +2,9 @@
 
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Canciones Pedidas</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Cola de Canciones - Goltra Karaoke</title>
     <style>
         {{stylesheet}}
     </style>
@@ -12,14 +14,34 @@
     <header>
        <!-- {{menu}} -->
     </header>
-    <h1>Canciones Pedidas</h1>
-    <a class="search_a" href="/"><< Volver al inicio</a>
-    <div class="canciones-pedidas">
-        {{canciones_pedidas}}
+
+    <div class="container__mainscreen" style="padding-top: 20px;">
+        <h1>📋 Cola de Canciones</h1>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <a class="search_a" href="/">
+                <span class="material-icons" style="vertical-align: middle; font-size: 20px;">arrow_back</span>
+                Volver al inicio
+            </a>
+        </div>
+
+        <div class="canciones-pedidas">
+            {{canciones_pedidas}}
+        </div>
     </div>
+
     <script>
         async function eliminarCancion(index) {
+            const cancionElement = event.target.closest('.cancion');
+
             try {
+                // Añadir animación de salida
+                if (cancionElement) {
+                    cancionElement.style.transition = 'all 0.3s ease';
+                    cancionElement.style.transform = 'scale(0.8)';
+                    cancionElement.style.opacity = '0';
+                }
+
                 const del = await fetch('/delsong', {
                     method: 'POST',
                     headers: {
@@ -28,16 +50,24 @@
                     body: JSON.stringify({
                         index: parseInt(index, 10)
                     })
-
                 });
+
                 if (del.ok){
-                    location.reload();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 300);
+                } else {
+                    throw new Error('Error al eliminar');
                 }
             } catch (error) {
+                console.error('Error:', error);
+                if (cancionElement) {
+                    cancionElement.style.transform = 'scale(1)';
+                    cancionElement.style.opacity = '1';
+                }
                 alert("Hubo un error al intentar eliminar la canción. Inténtelo de nuevo más tarde");
             }
-
-        };
+        }
     </script>
 </body>
 

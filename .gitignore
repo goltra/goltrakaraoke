@@ -136,3 +136,5 @@ dist
 currentSong.txt
 *.zip
 Project_Default.xml
+.claude
+QWEN.md

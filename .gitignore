@@ -134,3 +134,5 @@ dist
 
 .idea/vcs.xml
 currentSong.txt
+*.zip
+Project_Default.xml

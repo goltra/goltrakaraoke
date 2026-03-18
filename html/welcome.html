@@ -104,8 +104,10 @@
         try {
             const data = await fetch('/getCurrentSong', {method: 'GET'});
             const song = await data.json();
-            const title = song.title.trim();
-            const singer = song.singer.trim();
+
+            // Validar que existan las propiedades antes de usar trim()
+            const title = (song.title || 'ninguno').trim();
+            const singer = (song.singer || 'ninguno').trim();
 
             // Solo actualizar si hay cambios
             const currentSongKey = `${singer}|${title}`;
